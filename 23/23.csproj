@@ -6,8 +6,4 @@
     <RootNamespace>_23</RootNamespace>
   </PropertyGroup>
 
-  <ItemGroup>
-    <Folder Include="Soubory\" />
-  </ItemGroup>
-
 </Project>
