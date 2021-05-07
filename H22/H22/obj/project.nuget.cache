@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "dgSpecHash": "+D6WbgMLV+c3xq3BvQBggGch3vOJ48xVJ4JmiJL/tmwdA9tVNLd8DUws8AqzgrpdA/IKYvkJUjcjLPOoBZpvAA==",
+  "success": true,
+  "projectFilePath": "C:\\Users\\GAME PC\\source\\repos\\H22\\H22\\H22.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\GAME PC\\.nuget\\packages\\microsoft.netcore.app.host.win-x64\\3.1.13\\microsoft.netcore.app.host.win-x64.3.1.13.nupkg.sha512"
+  ],
+  "logs": []
+}

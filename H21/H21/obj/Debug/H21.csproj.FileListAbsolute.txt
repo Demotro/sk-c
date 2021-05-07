@@ -1,0 +1,7 @@
+C:\Users\GAME PC\source\repos\H21\H21\obj\Debug\H21.csprojAssemblyReference.cache
+C:\Users\GAME PC\source\repos\H21\H21\obj\Debug\H21.csproj.CoreCompileInputs.cache
+C:\Users\GAME PC\source\repos\H21\H21\bin\Debug\H21.exe.config
+C:\Users\GAME PC\source\repos\H21\H21\bin\Debug\H21.exe
+C:\Users\GAME PC\source\repos\H21\H21\bin\Debug\H21.pdb
+C:\Users\GAME PC\source\repos\H21\H21\obj\Debug\H21.exe
+C:\Users\GAME PC\source\repos\H21\H21\obj\Debug\H21.pdb
