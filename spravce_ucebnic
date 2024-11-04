@@ -1,0 +1,279 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.IO;
+
+namespace SpravceUcebnic
+{
+    class Program
+    {
+        struct Ucebnice // struktura promennych v jednom celku
+        {
+            public string Predmet; // promenna pro nazev predmetu
+            public string NazevUcebnice; 
+            public int Mnozstvi;
+            public int CelkoveMnozstvi;
+        }
+
+        static Ucebnice PridatUcebnici() // metoda, prida ucebnici do seznamu s platnym predmetem, nazvem ucebnice a zjistuje mnozstvi k zakoupeni
+        {
+            Ucebnice ucebnice = new Ucebnice(); // vytvori novou instanci struktury ucebnice a priradi ji do promenne ucebnice
+            ucebnice.Predmet = VybratPlatnyPredmet(); // volani metody pro vyber platneho predmetu/ atribut
+            ucebnice.NazevUcebnice = ucebnice.Predmet + " " + CisloUcebnice(); // vytvoreni nazvu ucebnice/ atribut
+            ucebnice.CelkoveMnozstvi = 20; // nastaveni celkoveho mnozstvi ucebnic/ atribut
+            ucebnice.Mnozstvi = Mnozstvi(ucebnice.CelkoveMnozstvi); // volani metody pro ziskani mnozstvi k zakoupeni/ atribut
+            return ucebnice; // vraci instanci ucebnice
+        }
+
+        static string VybratPlatnyPredmet() // uzivatel vybere z platnych ucebnic
+        {
+            string[] platnePredmety = { "matematika", "psychologie", "programovani", "architektura pocitacu", "objektove modelovani" };
+            //definice pole platnych predmetu
+            Console.WriteLine("Dostupné předměty: matematika, psychologie, programovani, architektura pocitacu, objektove modelovani");
+            //vypis dostupnych predmetu
+            string? predmet; // promenna predmet muze byt null
+            bool PlatnyPredmet(string a)
+            {
+                return a == predmet; // vraci true, pokud string a a pormenna predmet jsou stejny, pokud ne vraci false
+            }
+            Console.Write("Zadej předmět: ");
+            do
+            {
+                predmet = Console.ReadLine(); // predmet muze byt null, kdyz nezadame zadny text, zmackneme enter bez textu
+                if (!Array.Exists(platnePredmety, PlatnyPredmet))
+                // metoda, ktera kontroluje jestli jeden z prvku v poli splnuje podminku metody platnypredmet - predikat
+                // vraci true pokud najde alespon jeden takovy prvek, nebo kdyz nenajde tak vraci false
+                // je tam ! takze kdyz vrati true(predmet je platny), tak se pravrati na false a naopak
+                // takze celkove - overuje jestli zadany predmet neni v seznamu platnych predmetu
+                {
+                    Console.ForegroundColor = ConsoleColor.Red; // neni batvu textu pole na cervenou
+                    Console.WriteLine("Neplatný předmět.");
+                    Console.ResetColor(); // obnovi barvu textu
+                    Console.Write(" Zadej jeden z dostupných předmětů: ");
+                }
+            } while (!Array.Exists(platnePredmety, PlatnyPredmet)); // cyklus smycky vyzyva k zadani predmetu, dokud nezada platny predmet
+            return predmet ?? ""; // vraci hodnotu promenne predmet - kdyz promenna neni null, vrati hodnotu promenne predmet
+            // je tam operator ?? aby promenna vzdy obsahovala hodnotu, pokud predmet je null, vrati prazdny string
+        }
+
+        static int CisloUcebnice() // metoda, ziska platne cislo ucebnice
+        {
+            int cislo;
+            Console.Write("Vyber číslo učebnice (1-4): ");
+            while (!int.TryParse(Console.ReadLine(), out cislo) || cislo < 1 || cislo > 4)
+                // podminka ktera prevede vstup na cislo z retezce, pokud se podari tak vraci true, jestli ne vraci false, a zaroven
+                // cislo neni v rozsahu 1 az 4, je to znegovany takze cely naopak, out dela ze z (metody)int.tryparse() vraci hodnotu cisla
+                // out - pokud se podari prevest vstup na cislo, metoda vrati true a bude obsahovat prevedene cislo, kdyz ne tak false je nezmeneny
+                // while se opakuje do doby dokud nezadame cislo od 1 do 4
+            {
+                Console.ForegroundColor = ConsoleColor.Red; // nastavi barvu textu na cervenou
+                Console.WriteLine("Neplatný vstup.");
+                Console.ResetColor(); // vrati zpet puvodni barvu
+                Console.Write("Zadej číslo učebnice (1-4): ");
+            }
+            return cislo; // vrati cislo v rozmezi 1 az 4
+        }
+
+        static int Mnozstvi(int maximalniMnozstvi) // kontroluje mnozstvi ucebnic
+        {
+            int mnozstvi;
+            do
+            {
+                Console.Write("Zadej množství k zakoupení: ");
+                while (!int.TryParse(Console.ReadLine(), out mnozstvi) || mnozstvi < 0 || mnozstvi > maximalniMnozstvi)
+                {
+                    // podminka ktera prevede vstup na cislo z retezce, pokud se podari tak vraci true, jestli ne vraci false, a zaroven
+                    // cislo je mensi nez 0 nebo vetsi nez maximalniMnozstvi, je to znegovany takze cely naopak
+                    // while se opakuje do doby dokud nezadame cislo mezi 0 az maximalniMnozstvi
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("Neplatný vstup.");
+                    Console.ResetColor();
+                    Console.Write($"Zadej platné množství k zakoupení (maximálně {maximalniMnozstvi}): ");
+                }
+                if (mnozstvi == 0) // kontroluje jestli jsme nezadali 0, kdyz ano, tak se mu vypise chybova zprava
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("Musíš koupit aspoň jednu učebnici.");
+                    Console.ResetColor();
+                }
+            } while (mnozstvi == 0); // smycka se opakuje do doby nez napiseme platne cislo nebo nenapiseme nulu
+            return mnozstvi;
+        }
+
+        static void ZobrazitUcebnici(List<Ucebnice> ucebnice, int i) // metoda, zobrazi informace urcite ucebnice
+        {
+            int zbyvajiciMnozstvi = ucebnice[i].CelkoveMnozstvi - ucebnice[i].Mnozstvi; // vypocita zbyvajici mnozstvi rozdilem
+            Console.WriteLine("Předmět: {0}, Název učebnice: {1}, Množství k zakoupení: {2}, Zbývající množství: {3}",
+                               ucebnice[i].Predmet, ucebnice[i].NazevUcebnice, ucebnice[i].Mnozstvi, zbyvajiciMnozstvi);
+            // vypisuje informace o ucebnici na konzoli
+        }
+
+        static List<Ucebnice> SmazatUcebnici(List<Ucebnice> ucebnice, int i) // metoda, smaze ucebnici ze seznamu
+        {
+            ucebnice.RemoveAt(i); // odstrani ucebnici s hodnotou i pomoci metody RemoveAt() ze seznamu ucebnice
+            return ucebnice; // metoda se vrati s aktualizovanym seznamem ucebnice
+        }
+
+        static void ZapisDoSouboru(List<Ucebnice> ucebnice, int pocet) // zapisuje informace do textoveho souboru ucebnice.txt
+            // prijima 2 parametry seznam ojbektu typu ucebnice a cele cislo int pocet, ktery urcuje kolik zaznamu se ma zapsat do souboru
+        { // void protoze nevraci zadnou hodnotu ani objekt, pouze zapisuje informace do souboru
+            string nazevSouboru = "ucebnice.txt"; // promenna uklada nazev souboru, do ktereho se budou zapisovat informace
+            using (StreamWriter sw = new StreamWriter(nazevSouboru)) // instance streamwriter otevre soubor pro zapis
+            {
+                for (int i = 0; i < pocet; i++) // for cyklus iteruje od 0 do pocet -1, tedy celkem pocet operaci
+                {
+                    sw.WriteLine("Předmět: {0}, Název učebnice: {1}, Množství k zakoupení: {2}, Zbývající množství: {3}",
+                        ucebnice[i].Predmet, ucebnice[i].NazevUcebnice, ucebnice[i].Mnozstvi, ucebnice[i].CelkoveMnozstvi - ucebnice[i].Mnozstvi);
+                    // zapisuje informace do souboru v tomto formatu
+                }
+                Console.WriteLine($"Informace o učebnicích byly zapsány do souboru '{nazevSouboru}'."); // vypsani zpravy
+            }
+        }
+
+        static List<Ucebnice> NacistZeSouboru(out int pocet) // cte informace o ucebnicich ze souboru a vraci seznam objektu ucebnice
+            // out in obsahuje pocet nactenych radku
+        {
+            string nazevSouboru = "ucebnice.txt"; // nazev souboru ktery se bude cist
+            List<Ucebnice> ucebniceList = new List<Ucebnice>(); // novy seznam pro ukladani informaci objektu ucebnice
+
+            if (File.Exists(nazevSouboru)) // kontroluje jestli soubor existuje
+            {
+                string[] lines = File.ReadAllLines(nazevSouboru); // vsechny radky jsou nacteny do pole lines, kazdy prvek pole je 1 radek ze souboru
+                foreach (string line in lines) // smycka, ktera prochazi kazdy radek
+                {
+                    string[] data = line.Split(','); // rozdeli jeden radek do casti, ktere jsou oddelene carkou, pak druhy, postupne
+                    Ucebnice ucebnice = new Ucebnice // vytvori novy objekt tridy ucebnice pro kazdy radek
+                    {
+                        Predmet = data[0].Split(':')[1].Trim(), // rozdeli prvni cast kde je : a vybere druhou cast kde je nazev predmetu
+                        NazevUcebnice = data[1].Split(':')[1].Trim(), // rozdeli prvni cast kde je : a vybere druhou cast kde je nazev ucebnice
+                        Mnozstvi = int.Parse(data[2].Split(':')[1].Trim()), // rozdeli prvni cast kde je : a vybere druhou cast kde je mnozstvi
+                        CelkoveMnozstvi = 20, // pevne dana hodnota, jelikoz se samo dopocita, kolik zbyva ucebnic
+                    };
+                    ucebniceList.Add(ucebnice); // objekt ucebnice se prida do seznamu ucebniceList
+                }
+            }
+            pocet = ucebniceList.Count; // vystup pocet obsahuje pocet nactenych radku
+            return ucebniceList; // vraci seznam objektu ucebnice
+        }
+
+        static int IndexUcebnice(int pocet) // metoda, ziska index ucebnice
+        {
+            int i; // promennna pro index
+            Console.Write("Zadejte index: ");
+            while (!int.TryParse(Console.ReadLine(), out i) || i < 0 || i >= pocet) // plati dokud nezadame platny index
+                // kontroluje aby byl index mensi nez pocet - pocet ucebnic, out dela to ze kdyz nezada platny cislo, tak se nezmeni hodnota i
+            {
+                Console.ForegroundColor = ConsoleColor.Red; // nastavi barvu textu na cervenou
+                Console.Write("Neplatný vstup. ");
+                Console.ResetColor();
+                Console.WriteLine("Zadejte platný index.");
+                Console.Write("Zadejte index: ");
+            }
+            return i; // vrati platny index
+        }
+
+        static void Main(string[] args) // hlavni smycka programu, obsahuje menu a volby pro pridani, zobrazeni, smazani, zapis a nacteni ucebnic
+        {
+            List<Ucebnice> ucebnice = new List<Ucebnice>(); // vytvori novy prazdy seznam a bude obsahovat objekty ucebnice
+            int pocet = 0, i; // pocet, slouzi k uchovani poctu ucebnic v seznamu, i pro ukladani indexu
+            char vystup;
+            do
+            {
+                Console.Clear();
+                Console.WriteLine("Správce učebnic - MENU");
+                Console.WriteLine("-----------------------");
+                Console.WriteLine("Přidat učebnici [p]");
+                Console.WriteLine("Zobrazit učebnici [u]");
+                Console.WriteLine("Zobrazit všechny učebnice [v]");
+                Console.WriteLine("Smazat učebnici [s]");
+                Console.WriteLine("Zápis do souboru [z]");
+                Console.WriteLine("Načíst ze souboru [n]");
+                Console.WriteLine("Ukončit program [k]");
+                Console.Write("Zadejte akci: ");
+                vystup = char.ToLower(Console.ReadKey().KeyChar); // vraci znak malym pismenem, ktery byl stisknut
+                switch (vystup) // prikaz ktery vybere co se ma provest podle vystupu
+                {
+                    case 'p':
+                        Console.Clear();
+                        Console.WriteLine("Správce učebnic - Přidání učebnice");
+                        Console.WriteLine("-----------------------------------");
+                        ucebnice.Add(PridatUcebnici());
+                        pocet++;
+                        break;
+                    case 'u':
+                        Console.Clear();
+                        Console.WriteLine("Správce učebnic - Zobrazení učebnice");
+                        Console.WriteLine("-------------------------------------");
+                        if (ucebnice.Count > 0) // kontroluje jestli seznam obsahuje nejake ucebnice
+                        {
+                            i = IndexUcebnice(ucebnice.Count);
+                            ZobrazitUcebnici(ucebnice, i);
+                        }
+                        else
+                        {
+                            Console.WriteLine("Žádné učebnice nejsou k dispozici.");
+                        }
+                        Console.ReadKey();
+                        break;
+                    case 'v':
+                        Console.Clear();
+                        Console.WriteLine("Správce učebnic - Zobrazení všech učebnic");
+                        Console.WriteLine("------------------------------------------");
+                        if (ucebnice.Count > 0) // kontroluje jestli seznam obsahuje nejake ucebnice
+                        {
+                            foreach (var x in ucebnice) // cyklus ktery se provede pro kazdou ucebnici
+                            {
+                                ZobrazitUcebnici(ucebnice, ucebnice.IndexOf(x));
+                                // vola metodu, ktera zobrazuje informace o ucebnici, index aktualni
+                                // se ziska pomoci indexof(x)
+                            }
+                        }
+                        else
+                        {
+                            Console.WriteLine("Žádné učebnice nejsou k dispozici.");
+                        }
+                        Console.ReadKey();
+                        break;
+                    case 's':
+                        Console.Clear();
+                        Console.WriteLine("Správce učebnic - Smazání učebnice");
+                        Console.WriteLine("-----------------------------------");
+                        if (ucebnice.Count > 0) // kontroluje jestli seznam obsahuje nejake ucebnice
+                        {
+                            i = IndexUcebnice(ucebnice.Count);
+                            SmazatUcebnici(ucebnice, i);
+                        }
+                        else
+                        {
+                            Console.WriteLine("Žádné učebnice nejsou ke smazání.");
+                        }
+                        Console.ReadKey();
+                        break;
+                    case 'z':
+                        Console.Clear();
+                        Console.WriteLine("Správce učebnic - Zápis do souboru");
+                        Console.WriteLine("------------------------------------");
+                        ZapisDoSouboru(ucebnice, pocet);
+                        Console.ReadKey();
+                        break;
+                    case 'n':
+                        Console.Clear();
+                        Console.WriteLine("Správce učebnic - Načtení ze souboru");
+                        Console.WriteLine("------------------------------------");
+                        ucebnice = NacistZeSouboru(out pocet);
+                        Console.WriteLine("Učebnice byly načteny ze souboru.");
+                        Console.ReadKey();
+                        break;
+                    case 'k': // ukonci program po stisknuti k
+                        break;
+                    default: // provede se kdyz se nezada znak, ktery neodpovida zadne z moznosti v menu
+                        Console.WriteLine("\nNeplatná volba!");
+                        Console.ReadKey();
+                        break;
+                }
+            } while (vystup != 'k'); // neukonci program dokud se nezmackne k
+        }
+    }
+}
